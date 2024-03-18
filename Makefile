@@ -3,3 +3,6 @@ fmt:
 
 lint:
 	cargo clippy
+
+run:
+	cargo run
