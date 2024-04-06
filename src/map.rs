@@ -15,12 +15,19 @@ pub struct Map {
     pub width : i32,
     pub height : i32,
     pub revealed_tiles : Vec<bool>,
-    pub visible_tiles : Vec<bool>
+    pub visible_tiles : Vec<bool>,
+    pub blocked : Vec<bool>
 }
 
 impl Map {
     pub fn xy_idx(&self, x: i32, y: i32) -> usize {
         (y as usize * self.width as usize) + x as usize
+    }
+
+    pub fn populate_blocked(&mut self) {
+        for (i, tile) in self.tiles.iter_mut().enumerate() {
+            self.blocked[i] = *tile == TileType::Wall;
+        }
     }
 
     fn apply_room_to_map(&mut self, room : &Rect) {
@@ -50,6 +57,12 @@ impl Map {
         }
     }
 
+    fn is_exit_valid(&self, x:i32, y:i32) -> bool {
+        if x < 1 || x > self.width-1 || y < 1 || y > self.height-1 { return false; }
+        let idx = self.xy_idx(x, y);
+        !self.blocked[idx as usize]
+    }
+
     /// Makes a new map using the algorithm from http://rogueliketutorials.com/tutorials/tcod/part-3/
     /// This gives a handful of random rooms and corridors joining them together.
     pub fn new_map_rooms_and_corridors() -> Map {
@@ -59,7 +72,8 @@ impl Map {
             width : 80,
             height: 50,
             revealed_tiles : vec![false; 80*50],
-            visible_tiles : vec![false; 80*50]
+            visible_tiles : vec![false; 80*50],
+            blocked : vec![false; 80*50]
         };
 
         const MAX_ROOMS : i32 = 30;
@@ -98,12 +112,6 @@ impl Map {
         }
 
         map
-    }
-
-    fn is_exit_valid(&self, x:i32, y:i32) -> bool {
-        if x < 1 || x > self.width-1 || y < 1 || y > self.height-1 { return false; }
-        let idx = self.xy_idx(x, y);
-        self.tiles[idx as usize] != TileType::Wall
     }
 }
 
