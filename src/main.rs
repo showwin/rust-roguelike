@@ -1,10 +1,14 @@
 use rltk::{GameState, Rltk, RGB, Point};
-use specs::{prelude::*, rayon::iter::MapInit};
+use specs::prelude::*;
 
 mod components;
 pub use components::*;
+mod damage_system;
+pub use damage_system::*;
 mod map;
 pub use map::*;
+mod melee_combat_system;
+pub use melee_combat_system::*;
 mod map_indexing_system;
 pub use map_indexing_system::MapIndexingSystem;
 mod monster_ai_system;
@@ -50,6 +54,8 @@ impl GameState for State {
             self.runstate = player_input(self, ctx);
         }
 
+        damage_system::delete_the_dead(&mut self.ecs);
+
         draw_map(&self.ecs, ctx);
 
         let positions = self.ecs.read_storage::<Position>();
@@ -82,6 +88,8 @@ fn main() -> rltk::BError {
     gs.ecs.register::<Viewshed>();
     gs.ecs.register::<BlocksTile>();
     gs.ecs.register::<CombatStats>();
+    gs.ecs.register::<WantsToMelee>();
+    gs.ecs.register::<SufferDamage>();
 
     let map : Map = Map::new_map_rooms_and_corridors();
     let (player_x, player_y) = map.rooms[0].center();
