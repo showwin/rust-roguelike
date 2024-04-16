@@ -4,7 +4,7 @@ use specs::prelude::*;
 mod components;
 pub use components::*;
 mod damage_system;
-pub use damage_system::*;
+pub use damage_system::DamageSystem;
 mod map;
 pub use map::*;
 mod melee_combat_system;
@@ -38,6 +38,12 @@ impl State {
 
         let mut mapindex = MapIndexingSystem{};
         mapindex.run_now(&self.ecs);
+
+        let mut melee = MeleeCombatSystem{};
+        melee.run_now(&self.ecs);
+
+        let mut damage = DamageSystem{};
+        damage.run_now(&self.ecs);
 
         self.ecs.maintain();
     }

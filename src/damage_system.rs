@@ -1,5 +1,6 @@
 use specs::prelude::*;
 use super::{CombatStats, SufferDamage};
+use rltk::{console};
 
 pub struct DamageSystem {}
 

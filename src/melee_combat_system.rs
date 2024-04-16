@@ -6,10 +6,11 @@ pub struct MeleeCombatSystem {}
 
 impl<'a> System<'a> for MeleeCombatSystem {
     type SystemData = ( Entities<'a>,
-    WriteStorage<'a, WantsToMelee>,
-    ReadStorage<'a, Name>,
-    ReadStorage<'a, CombatStats>,
-    WriteStorage<'a, SufferDamage>);
+                        WriteStorage<'a, WantsToMelee>,
+                        ReadStorage<'a, Name>,
+                        ReadStorage<'a, CombatStats>,
+                        WriteStorage<'a, SufferDamage>
+                      );
 
     fn run(&mut self, data : Self::SystemData) {
         let (entities, mut wants_melee, names, combat_stats, mut inflict_damage) = data;
@@ -23,7 +24,7 @@ impl<'a> System<'a> for MeleeCombatSystem {
                     if damage == 0 {
                         console::log(&format!("{} is unable to hurt {}", &name.name, &target_name.name));
                     } else {
-                        console::log(&format!("{} hits {}, for {} hp", &name.name, &target_name.name, damage));
+                        console::log(&format!("{} hits {}, for {} hp.", &name.name, &target_name.name, damage));
                         SufferDamage::new_damage(&mut inflict_damage, wants_melee.target, damage);
                     }
                 }
