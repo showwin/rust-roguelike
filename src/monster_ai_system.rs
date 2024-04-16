@@ -1,6 +1,6 @@
 use specs::prelude::*;
 use super::{Viewshed, Monster, Map, Position, WantsToMelee, RunState};
-use rltk::{Point};
+use rltk::Point;
 
 pub struct MonsterAI {}
 
@@ -20,7 +20,7 @@ impl<'a> System<'a> for MonsterAI {
         let (mut map, player_pos, player_entity, runstate, entities, mut viewshed, monster, mut position, mut wants_to_melee) = data;
         if *runstate != RunState::MonsterTurn { return; }
 
-        for (entity, mut viewshed,_monster,mut pos) in (&entities, &mut viewshed, &monster, &mut position).join() {
+        for (entity, viewshed,_monster, pos) in (&entities, &mut viewshed, &monster, &mut position).join() {
             let distance = rltk::DistanceAlg::Pythagoras.distance2d(Point::new(pos.x, pos.y), *player_pos);
             if distance < 1.5 {
                 wants_to_melee.insert(entity, WantsToMelee{ target: *player_entity }).expect("Unable to insert attack");
